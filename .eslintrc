@@ -1,0 +1,11 @@
+{
+    "extends": "eslint-config-airbnb-base",
+    "env": {
+        "browser": true
+    },
+    "rules": {
+        "indent": ["error", 4],
+        "quotes": ["warn", "double"],
+        "no-console": 0
+    }
+}
