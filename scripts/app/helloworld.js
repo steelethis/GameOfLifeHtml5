@@ -1,5 +1,7 @@
-define(function helloworld() {
-    return {
-        getHello: () => "Hello World",
-    };
+define(() => {
+    function getHello() {
+        return "Hello World";
+    }
+
+    return getHello;
 });
