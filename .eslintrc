@@ -1,11 +1,26 @@
 {
-    "extends": "eslint-config-airbnb-base",
+    "plugins": [
+        "requirejs"
+    ],
+    "extends": [
+        "plugin:requirejs/recommended",
+        "eslint-config-airbnb-base"
+    ],
     "env": {
-        "browser": true
+        "browser": true,
+        "es6": true
+    },
+    "globals": {
+        "requirejs": false
+    },
+    "parserOptions": {
+        "ecmaVersion": 6
     },
     "rules": {
         "indent": ["error", 4],
         "quotes": ["warn", "double"],
+        "linebreak-style": ["warn", "windows"],
+        "prefer-arrow-callback": ["error", {"allowNamedFunctions": true}],
         "no-console": 0
     }
 }
