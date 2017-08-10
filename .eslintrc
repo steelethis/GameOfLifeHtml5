@@ -21,6 +21,7 @@
         "indent": ["error", 4],
         "quotes": ["warn", "double"],
         "linebreak-style": ["warn", "windows"],
-        "no-console": 0
+        "no-console": 0,
+        "import/no-amd": 0
     }
 }
