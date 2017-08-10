@@ -18,5 +18,5 @@ requirejs(["./biome"], (Biome) => {
         requestAnimationFrame(animationLoop);
     }
 
-    animationLoop();
+    window.onload = animationLoop();
 });

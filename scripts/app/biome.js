@@ -3,18 +3,36 @@ define(["./cell"], (Cell) => {
         this.canvasId = canvasId;
         this.canvas = document.getElementById(canvasId);
         this.context = this.canvas.getContext("2d");
+
+        this.ecosystem = [];
     }
 
     Biome.prototype.seedBiome = () => {
-
+        const canvasWidth = 400;
+        const canvasHeight = 400;
+        for (let x = 0; x < canvasWidth; x += 1) {
+            const column = [];
+            for (let y = 0; y < canvasHeight; y += 1) {
+                column.push(new Cell(true));
+            }
+            this.ecosystem.push(column);
+        }
     };
 
     Biome.prototype.draw = () => {
-
+        if (this.context) {
+            for (let x = 0; x < this.ecosystem.length; x += 1) {
+                for (let y = 0; y < this.ecosystem[x].length; y += 1) {
+                    // draw each cell.
+                    // console.log("Drawing cell" + this.ecosystem[x][y]);
+                    console.log(`Drawing cell ${this.ecosystem[x][y]}`);
+                }
+            }
+        }
     };
 
     Biome.prototype.update = () => {
-
+        console.log("Updating biome");
     };
 
     return Biome;
