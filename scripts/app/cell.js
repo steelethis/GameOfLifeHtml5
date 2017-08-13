@@ -1,18 +1,21 @@
 define(() => {
-    function Cell(status) {
-        this.alive = status;
+    class Cell {
+        constructor(status) {
+            this.alive = status;
+        }
+
+        checkStatus() {
+            return this.alive;
+        }
+
+        kill() {
+            this.alive = false;
+        }
+
+        revive() {
+            this.alive = true;
+        }
     }
-
-    Cell.prototype.kill = () => {
-        this.alive = false;
-    };
-
-    Cell.prototype.revive = () => {
-        this.alive = true;
-    };
-
-    // returns the status of the cell.
-    Cell.prototype.checkStatus = () => this.alive;
 
     return Cell;
 });

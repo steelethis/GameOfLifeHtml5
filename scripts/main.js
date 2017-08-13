@@ -18,5 +18,6 @@ requirejs(["./biome"], (Biome) => {
         requestAnimationFrame(animationLoop);
     }
 
+    // Animation loop should probably start on a button click or something.
     window.onload = animationLoop();
 });
