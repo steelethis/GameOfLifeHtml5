@@ -4,6 +4,8 @@ define(["./cell"], (Cell) => {
             this.canvasId = canvasId;
             this.canvas = document.getElementById(canvasId);
             this.context = this.canvas.getContext("2d");
+            this.x = 0;
+            this.y = 0;
 
             this.ecosystem = [];
         }
@@ -14,7 +16,8 @@ define(["./cell"], (Cell) => {
             for (let x = 0; x < canvasWidth; x += 1) {
                 const column = [];
                 for (let y = 0; y < canvasHeight; y += 1) {
-                    column.push(new Cell(true));
+                    const isAlive = Boolean(Math.floor(Math.random() * 2));
+                    column.push(new Cell(isAlive));
                 }
                 this.ecosystem.push(column);
             }
@@ -22,33 +25,27 @@ define(["./cell"], (Cell) => {
 
         draw() {
             if (this.context) {
-                const imagedata = this.context.createImageData(400, 400);
+                const imagedata = this.context.getImageData(0, 0, 400, 400);
                 const imagedatalength = imagedata.data.length;
 
-                for (let i = 0; i < imagedatalength / 4; i += 1) {
-                    let x = 0;
-                    let y = 0;
-
-                    if (this.ecosystem[x][y].checkStatus()) {
-                        imagedata.data[4 * i] = 255;
-                        imagedata.data[4 * i + 1] = 0;
-                        imagedata.data[4 * i + 2] = 0;
-                        imagedata.data[4 * i + 3] = 255;
+                for (let i = 0; i < imagedatalength; i += 4) {
+                    if (this.x > 399) {
+                        this.x = 0;
+                        if (this.y <= 399) {
+                            this.y += 1;
+                        }
+                    }
+                    if (this.ecosystem[this.x][this.y].checkStatus()) {
+                        imagedata.data[i] = 255;
+                        imagedata.data[i + 1] = 0;
+                        imagedata.data[i + 2] = 0;
+                        imagedata.data[i + 3] = 255;
                     }
 
-                    x += 1;
-                    if (x > 400) {
-                        x = 0;
-                        y += 1;
-                    }
+                    this.x += 1;
                 }
 
                 this.context.putImageData(imagedata, 0, 0);
-                // for (let x = 0; x < this.ecosystem.length; x += 1) {
-                //     for (let y = 0; y < this.ecosystem[x].length; y += 1) {
-                //         console.log(`Drawing cell ${this.ecosystem[x][y]}`);
-                //     }
-                // }
             }
         }
 
@@ -59,13 +56,4 @@ define(["./cell"], (Cell) => {
     }
 
     return Biome;
-    // Stage.prototype.draw = function draw() {
-    //     if (this.context) {
-    //         this.context.fillStyle = "rgb(200, 0, 0)";
-    //         this.context.fillRect(10, 10, 50, 50);
-
-    //         this.context.fillStyle = "rgba(0, 0, 200, 0.5)";
-    //         this.context.fillRect(30, 30, 50, 50);
-    //     }
-    // };
 });
