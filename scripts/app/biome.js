@@ -4,8 +4,6 @@ define(["./cell"], (Cell) => {
             this.canvasId = canvasId;
             this.canvas = document.getElementById(canvasId);
             this.context = this.canvas.getContext("2d");
-            this.x = 0;
-            this.y = 0;
 
             this.ecosystem = [];
         }
@@ -28,21 +26,24 @@ define(["./cell"], (Cell) => {
                 const imagedata = this.context.getImageData(0, 0, 400, 400);
                 const imagedatalength = imagedata.data.length;
 
+                let x = 0;
+                let y = 0;
+
                 for (let i = 0; i < imagedatalength; i += 4) {
-                    if (this.x > 399) {
-                        this.x = 0;
-                        if (this.y <= 399) {
-                            this.y += 1;
+                    if (x > 399) {
+                        x = 0;
+                        if (y < 399) {
+                            y += 1;
                         }
                     }
-                    if (this.ecosystem[this.x][this.y].checkStatus()) {
+                    if (this.ecosystem[x][y].checkStatus()) {
                         imagedata.data[i] = 255;
                         imagedata.data[i + 1] = 0;
                         imagedata.data[i + 2] = 0;
                         imagedata.data[i + 3] = 255;
                     }
 
-                    this.x += 1;
+                    x += 1;
                 }
 
                 this.context.putImageData(imagedata, 0, 0);
@@ -51,7 +52,7 @@ define(["./cell"], (Cell) => {
 
         // ignore the eslint error, method is stubbed out.
         update() {
-            console.log("Updating biome");
+            // I need to plan this out, as the logic here is kind of hard to mentally map.
         }
     }
 
