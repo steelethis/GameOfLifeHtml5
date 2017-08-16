@@ -9,118 +9,92 @@ define(["./cell"], (Cell) => {
         }
 
         seedBiome() {
-            const canvasWidth = 400;
-            const canvasHeight = 400;
+            const canvasWidth = this.canvas.width;
+            const canvasHeight = this.canvas.height;
+
             for (let x = 0; x < canvasWidth; x += 1) {
                 const column = [];
                 for (let y = 0; y < canvasHeight; y += 1) {
                     const probability = Math.random() * 100;
-                    if (probability < 25) {
+                    if (probability < 35) {
+                        console.log(`Cell ${x}:${y} is Alive`);
                         column.push(new Cell(true));
                     } else {
+                        console.log(`Cell ${x}:${y} is Dead`);
                         column.push(new Cell(false));
                     }
-//                    const isAlive = Boolean(Math.floor(Math.random() * 2));
                 }
                 this.ecosystem.push(column);
             }
         }
 
         draw() {
-            if (this.context) {
-                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                const imagedata = this.context.getImageData(0, 0, 400, 400);
-                const imagedatalength = imagedata.data.length;
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-                let x = 0;
-                let y = 0;
-
-                for (let i = 0; i < imagedatalength; i += 4) {
-                    if (x > 399) {
-                        x = 0;
-                        if (y < 399) {
-                            y += 1;
-                        }
+            this.ecosystem.forEach((row, x) => {
+                row.forEach((cell, y) => {
+                    if (cell.checkStatus()) {
+                        this.context.fillStyle = "#FF0000";
+                        this.context.fillRect(x, y, 1, 1);
                     }
-                    if (this.ecosystem[x][y].checkStatus()) {
-                        imagedata.data[i] = 255;
-                        imagedata.data[i + 1] = 0;
-                        imagedata.data[i + 2] = 0;
-                        imagedata.data[i + 3] = 255;
-                    }
-
-                    x += 1;
-                }
-
-                this.context.putImageData(imagedata, 0, 0);
-            }
+                });
+            });
         }
 
-        // ignore the eslint error, method is stubbed out.
         update() {
-            const nextGeneration = [];
+            const newGeneration = [];
 
-            for (let x = 0; x < this.ecosystem.length; x += 1) {
-                const column = [];
+            this.ecosystem.forEach((row, x) => {
+                newGeneration.push([]);
+                row.forEach((cell, y) => {
+                    let aliveNeighbors = 0;
 
-                for (let y = 0; y < this.ecosystem[x].length; y += 1) {
-                    // check each cell against its neighbors.
-                    let cellStatus = true;
-                    let neighborsAlive = 0;
-
-                    for (let xOffset = -1; xOffset < 2; xOffset += 1) {
-                        for (let yOffset = -1; yOffset < 2; yOffset += 1) {
-                            let xVal = x + xOffset;
-                            let yVal = y + yOffset;
-
-                            // Clamping offset values to within array boundaries.
-                            if (xVal < 0) {
-                                xVal = 0;
-                            }
-                            if (yVal < 0) {
-                                yVal = 0;
-                            }
-                            if (xVal >= this.ecosystem.length) {
-                                xVal = this.ecosystem.length - 1;
-                            }
-                            if (yVal >= this.ecosystem[x].length) {
-                                yVal = this.ecosystem[x].length - 1;
-                            }
-
-                            if (xVal !== 0 && yVal !== 0) {
-                                if (this.ecosystem[xVal][yVal].checkStatus()) {
-                                    neighborsAlive += 1;
-                                }
-                            }
+                    if (x > 0 && y > 0 && x < this.ecosystem.length - 1
+                        && y < this.ecosystem.length - 1) {
+                        if (this.ecosystem[x - 1][y - 1].checkStatus()) {
+                            aliveNeighbors += 1;
+                        }
+                        if (this.ecosystem[x][y - 1].checkStatus()) {
+                            aliveNeighbors += 1;
+                        }
+                        if (this.ecosystem[x + 1][y - 1].checkStatus()) {
+                            aliveNeighbors += 1;
+                        }
+                        if (this.ecosystem[x - 1][y].checkStatus()) {
+                            aliveNeighbors += 1;
+                        }
+                        if (this.ecosystem[x + 1][y].checkStatus()) {
+                            aliveNeighbors += 1;
+                        }
+                        if (this.ecosystem[x - 1][y + 1].checkStatus()) {
+                            aliveNeighbors += 1;
+                        }
+                        if (this.ecosystem[x][y + 1].checkStatus()) {
+                            aliveNeighbors += 1;
+                        }
+                        if (this.ecosystem[x + 1][y + 1].checkStatus()) {
+                            aliveNeighbors += 1;
                         }
                     }
 
-                    if (this.ecosystem[x][y].checkStatus()) {
-                        if (neighborsAlive < 2) {
-                            cellStatus = false;
+                    console.log(`Cell ${x}:${y} has ${aliveNeighbors} alive neighbors.`);
+                    if (cell.checkStatus()) {
+                        if (aliveNeighbors < 2) {
+                            newGeneration[x].push(new Cell(false));
+                        } else if (aliveNeighbors === 2 || aliveNeighbors === 3) {
+                            newGeneration[x].push(new Cell(true));
+                        } else if (aliveNeighbors > 3) {
+                            newGeneration[x].push(new Cell(false));
                         }
-                        if (neighborsAlive === 2 || neighborsAlive === 3) {
-                            cellStatus = true;
-                        }
-                        if (neighborsAlive > 3) {
-                            cellStatus = false;
-                        }
-                    } else if (!this.ecosystem[x][y].checkStatus()) {
-                        if (neighborsAlive === 3) {
-                            cellStatus = true;
-                        }
+                    } else if (!cell.checkStatus() && aliveNeighbors === 3) {
+                        newGeneration[x].push(new Cell(true));
+                    } else {
+                        newGeneration[x].push(new Cell(false));
                     }
+                });
+            });
 
-                    column.push(new Cell(cellStatus));
-                }
-                nextGeneration.push(column);
-            }
-
-            for (let x = 0; x < this.ecosystem.length; x += 1) {
-                for (let y = 0; y < this.ecosystem[x].length; y += 1) {
-                    this.ecosystem[x][y] = nextGeneration[x][y];
-                }
-            }
+            this.ecosystem = newGeneration;
         }
     }
 
