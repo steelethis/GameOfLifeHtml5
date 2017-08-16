@@ -17,10 +17,8 @@ define(["./cell"], (Cell) => {
                 for (let y = 0; y < canvasHeight; y += 1) {
                     const probability = Math.random() * 100;
                     if (probability < 35) {
-                        console.log(`Cell ${x}:${y} is Alive`);
                         column.push(new Cell(true));
                     } else {
-                        console.log(`Cell ${x}:${y} is Dead`);
                         column.push(new Cell(false));
                     }
                 }
@@ -30,7 +28,6 @@ define(["./cell"], (Cell) => {
 
         draw() {
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
             this.ecosystem.forEach((row, x) => {
                 row.forEach((cell, y) => {
                     if (cell.checkStatus()) {
@@ -77,7 +74,6 @@ define(["./cell"], (Cell) => {
                         }
                     }
 
-                    console.log(`Cell ${x}:${y} has ${aliveNeighbors} alive neighbors.`);
                     if (cell.checkStatus()) {
                         if (aliveNeighbors < 2) {
                             newGeneration[x].push(new Cell(false));
